@@ -1,13 +1,21 @@
-import express from 'express';
-import apiRouter from './routes/index.js'
+const express = require("express");
+const cors = require("cors");
+const petRouter = require("./routes/pets");
+const routerGroup = require("./routes/groups");
 
-const app = express()
-const PORT = 3000
 
-app.use(express.json())
+//config
+const app = express();
+const PORT = 3000;
 
-app.use("/api",apiRouter)
+//config
+app.use(express.json());
+app.use(cors());
+app.use(petRouter);
+app.use(routerGroup);
 
+
+//main
 app.listen(PORT, () => {
-    console.log(`Express server running at http://localhost:${PORT} 🚀`)
-})
+  console.info(`Express server running at http://localhost:${PORT} 🚀`);
+});
