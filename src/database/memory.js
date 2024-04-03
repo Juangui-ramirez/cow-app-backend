@@ -19,9 +19,13 @@ const petDB = [
 
 const groupDB = [
   {
-    name: "Group 1",
-    color: "red",
+    name: "Group 4",
+    color: "#FF0000",
+  },
+  {
+    name: "Group 6",
+    color: "#0000FF",
   },
 ];
 
-module.exports = { petDB, groupDB};
+module.exports = { petDB, groupDB };
