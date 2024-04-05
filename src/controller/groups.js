@@ -1,7 +1,8 @@
 const groupService = require("../services/groups");
 
 const getAll = (req, res) => {
-  const group = groupService.getAll();
+  const sort = req.query.sort || "asc";
+  const group = groupService.getAll(sort);
   res.json(group);
 };
 
@@ -10,10 +11,11 @@ const get = (req, res) => {
   const group = groupService.get(groupName);
 
   if (!group) {
-    res.status(404);
+    return res.status(404).json({ error: "Group not found" });
     return;
   }
   res.status(200).json(group);
+  return;
 };
 
 const create = (req, res) => {

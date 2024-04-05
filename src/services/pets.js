@@ -1,26 +1,25 @@
-const { petDB, groupDB } = require('../database/memory');
+const { petDB } = require("../database/memory");
 
- const getAll = () => {
+const getAll = () => {
   return petDB.map((pet) => ({ name: pet.name }));
 };
 
 /**
- * 
- * @param string name 
- * @returns 
+ *
+ * @param string name
+ * @returns
  */
- const get = (name) => {
+const get = (name) => {
   //const petName = req.params.name;
-  const foundPet = petDB.find(pet => pet.name === name);
+  const foundPet = petDB.find((pet) => pet.name === name);
   return foundPet;
   //res.json(foundPet);
 };
 
-
 /**
- * 
+ *
  * @param newPet of the form: {name: string, color: string, weigth: number}
- * @returns 
+ * @returns
  */
 const create = (newPet) => {
   //const pet = req.body;
@@ -28,7 +27,7 @@ const create = (newPet) => {
 
   //console.log("input pet", pet);
 
-  const alreadyThere = petDB.some(pet => pet.name === petName);
+  const alreadyThere = petDB.some((pet) => pet.name === petName);
   if (alreadyThere) {
     //res.status(409);
     return false;
@@ -38,11 +37,11 @@ const create = (newPet) => {
     color: newPet.color,
     weight: newPet.weight,
   });
- // res.status(201).json(pet);
+  // res.status(201).json(pet);
 };
 
 module.exports = {
-    getAll,
-    get,
-    create
-}
+  getAll,
+  get,
+  create,
+};

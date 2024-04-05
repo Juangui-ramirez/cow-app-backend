@@ -1,8 +1,22 @@
 // todo lo relacionado con los get
-const { petDB, groupDB } = require("../database/memory");
+const { groupDB } = require("../database/memory");
 
-const getAll = () => {
-  return groupDB.map((group) => ({ name: group.name, color: group.color }));
+/**
+ *
+ * @param string sort
+ * @returns
+ */
+const getAll = (sort) => {
+  let groupDbSorted = [];
+  if (sort === "asc") {
+    groupDbSorted = groupDB.sort((a, b) => a.name.localeCompare(b.name));
+  } else {
+    groupDbSorted = groupDB.sort((a, b) => b.name.localeCompare(a.name));
+  }
+  return groupDbSorted.map((group) => ({
+    name: group.name,
+    color: group.color,
+  }));
 };
 
 /**
@@ -30,7 +44,7 @@ const create = (newGroup) => {
     name: newGroup.name,
     color: newGroup.color,
   });
-  return true;
+  return newGroup;
 };
 
 module.exports = {
