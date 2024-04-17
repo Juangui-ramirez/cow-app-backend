@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import GroupRouter from "./routes/groups.js";
+import GroupRouter from "./routes/group.router.js";
 
 
 //config

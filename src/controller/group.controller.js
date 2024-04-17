@@ -1,4 +1,4 @@
-import  GroupService  from "../services/groups.js";
+import  GroupService  from "../services/group.service.js";
 
 const GroupController = () => {
   const groupService = GroupService();
