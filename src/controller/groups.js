@@ -1,37 +1,94 @@
-const groupService = require("../services/groups");
+import  GroupService  from "../services/groups.js";
 
-const getAll = (req, res) => {
-  const sort = req.query.sort || "asc";
-  const group = groupService.getAll(sort);
-  res.json(group);
-};
+const GroupController = () => {
+  const groupService = GroupService();
 
-const get = (req, res) => {
-  const groupName = req.params.name;
-  const group = groupService.get(groupName);
+  const getAll = (req, res) => {
+    const sort = req.query.sort || "asc";
+    const groups = groupService.getAll(sort);
 
-  if (!group) {
-    return res.status(404).json({ error: "Group not found" });
+    return res.status(200).json(groups);
+  };
+
+  const getById = (req, res) => {
+    const group = groupService.getById(req.params.id);
+
+    if (!group) {
+      return res
+        .status(404)
+        .json({ message: `Group with id ${req.params.id} doesn't exist` });
+    }
+
+    return res.status(200).json(group);
+  };
+
+  const getByName = (req, res) => {
+    const groupName = req.params.name;
+    const group = groupService.getByName(groupName);
+
+    if (!group) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+    res.status(200).json(group);
     return;
-  }
-  res.status(200).json(group);
-  return;
+  };
+
+  const create = (req, res) => {
+    const { name, color } = req.body;
+
+    if (!name || !color) {
+      return res.status(400).json({
+        message: "The field name is missing",
+      });
+    }
+
+    if (typeof name !== "string") {
+      return res.status(400).json({
+        message: "The field name should be a string",
+      });
+    }
+
+    if (!name.trim()) {
+      return res.status(400).json({
+        message: "The field name can not be empty",
+      });
+    }
+
+    if (typeof color !== "string") {
+      return res.status(400).json({
+        message: "The field color should be a string",
+      });
+    }
+
+    if (!color.trim()) {
+      return res.status(400).json({
+        message: "The field color can not be empty",
+      });
+    }
+
+    // creating our own body only with the fields we really need (name & color only)
+    // doing this we discard the rest of the fields we may receive in the body
+    const sanitizedBody = {
+      name: name.trim(),
+      color: color.trim(),
+    };
+
+    const { newGroup, success, message, code } =
+      groupService.create(sanitizedBody);
+
+    if (success) {
+      return res.status(code).json(newGroup);
+    } else {
+      return res.status(code).json(message);
+    }
+  };
+
+  return {
+    getById,
+    getAll,
+    getByName,
+    create,
+  };
 };
 
-const create = (req, res) => {
-  const newGroup = req.body;
-  const createdGroup = groupService.create(newGroup);
-
-  if (!createdGroup) {
-    res.status(400).json({ error: "Group already exists" });
-    return;
-  }
-
-  res.status(201).json(createdGroup);
-};
-
-module.exports = {
-  getAll,
-  get,
-  create,
-};
+export default GroupController;
