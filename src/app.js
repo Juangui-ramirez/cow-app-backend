@@ -1,7 +1,6 @@
-const express = require("express");
-const cors = require("cors");
-const petRouter = require("./routes/pets");
-const routerGroup = require("./routes/groups");
+import express from "express";
+import cors from "cors";
+import routerGroup from "./routes/groups.js";
 
 
 //config
@@ -11,7 +10,6 @@ const PORT = 3000;
 //config
 app.use(express.json());
 app.use(cors());
-app.use(petRouter);
 app.use(routerGroup);
 
 
