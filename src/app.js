@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import routerGroup from "./routes/groups.js";
+import GroupRouter from "./routes/groups.js";
 
 
 //config
@@ -10,7 +10,7 @@ const PORT = 3000;
 //config
 app.use(express.json());
 app.use(cors());
-app.use(routerGroup);
+app.use("/groups", GroupRouter().registerRoutes());
 
 
 //main

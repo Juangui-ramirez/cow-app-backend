@@ -1,14 +1,23 @@
-const express = require('express');
-const groupControllers = require('../controller/groups');
+import express from "express";
+import GroupController from "../controller/groups.js";
 
-const routerGroup = express.Router();
+const GroupRouter = () => {
+  const groupController = GroupController();
 
-//Begin logic/ presentacion
-routerGroup.get("/groups", groupControllers.getAll);
+  const registerRoutes = () => {
+    const router = express.Router();
 
-routerGroup.get("/groups/:name", groupControllers.get);
+    router.get("/", groupController.getAll);
+    router.get("/:id(\\d+)", groupController.getById);
+    router.get("/:name", groupController.getByName);
+    router.post("/", groupController.create);
 
-routerGroup.post("/groups", groupControllers.create);
-// END logic
+    return router;
+  };
 
-module.exports = routerGroup
+  return {
+    registerRoutes,
+  };
+};
+
+export default GroupRouter;
