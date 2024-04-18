@@ -1,4 +1,4 @@
-import  GroupService  from "../services/group.service.js";
+import GroupService from "../services/group.service.js";
 
 const GroupController = () => {
   const groupService = GroupService();
@@ -11,7 +11,7 @@ const GroupController = () => {
   };
 
   const getById = (req, res) => {
-    const group = groupService.getById(req.params.id);
+    const group = groupService.getById(Number(req.params.id));
 
     if (!group) {
       return res
@@ -27,7 +27,7 @@ const GroupController = () => {
     const group = groupService.getByName(groupName);
 
     if (!group) {
-      return res.status(404).json({ error: "Group not found" });
+      return res.status(404).json({ error: `${groupName} not exist` });
     }
     res.status(200).json(group);
     return;
@@ -83,11 +83,35 @@ const GroupController = () => {
     }
   };
 
+  const editById = (req, res) => {
+    const updated = groupService.editById(Number(req.params.id), req.body);
+
+    if (updated) {
+      return res.status(204).send();
+    }
+    return res.status(404).json({
+      message: `Group with id ${req.params.id} does not exist`,
+    });
+  };
+
+  const removeById = (req, res) => {
+    const removed = groupService.removeById(Number(req.params.id));
+    
+    if (removed) {
+      return res.status(204).send();
+    }
+    return res.status(404).json({
+      message: `Group with id ${req.params.id} does not exist`,
+    });
+  };
+
   return {
     getById,
     getAll,
     getByName,
     create,
+    editById,
+    removeById
   };
 };
 

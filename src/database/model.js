@@ -2,7 +2,7 @@ const Model = (initialEntities) => {
   const entities = initialEntities || [];
 
   const findUnique = (id) => {
-    return entities.find((entity) => entity.id === Number(id));
+    return entities.find((entity) => entity.id === (id));
   };
 
   const findMany = () => {
@@ -17,7 +17,7 @@ const Model = (initialEntities) => {
 
   const create = (entity) => {
     const maxId = entities.reduce((max, { id }) => Math.max(max, id), 0);
-    const newId = (maxId + 1).toString();
+    const newId = (maxId + 1);
     const newEntity = {
       ...entity,
       id: newId,
@@ -27,7 +27,7 @@ const Model = (initialEntities) => {
   };
 
   const update = (id, newEntity) => {
-    const entityIndex = entities.findIndex((entity) => entity.id === id);
+    const entityIndex = entities.findIndex((entity) => entity.id === (id));
     if (entityIndex !== -1) {
       entities[entityIndex] = newEntity;
       return true;
@@ -36,7 +36,7 @@ const Model = (initialEntities) => {
   };
 
   const del = (id) => {
-    const entityIndex = entities.findIndex((entity) => entity.id === id);
+    const entityIndex = entities.findIndex((entity) => entity.id === (id));
     if (entityIndex !== -1) {
       entities.splice(entityIndex, 1);
       return true;
