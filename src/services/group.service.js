@@ -85,6 +85,34 @@ const GroupService = () => {
       message: "Group created successfully",
       code: 201,
     };
+
+  };
+
+  const editById = (id, group) => {
+    const existingGroup = groupModel.findUnique(id);
+  
+    if (!existingGroup) {
+      return false;
+    }
+  
+    const updatedGroup = {
+      ...existingGroup,
+      ...group,
+    };
+  
+    const success = groupModel.update(id, updatedGroup);
+  
+    return success;
+  };
+  
+
+  const removeById = (id) => {
+    const removed = groupModel.delete(id);
+    
+    if (removed) {
+      return true; 
+    }
+    return false;
   };
 
   return {
@@ -92,6 +120,8 @@ const GroupService = () => {
     getById,
     getByName,
     create,
+    editById,
+    removeById
   };
 };
 

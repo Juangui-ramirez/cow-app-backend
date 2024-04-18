@@ -11,6 +11,8 @@ const GroupRouter = () => {
     router.get("/:id(\\d+)", groupController.getById);
     router.get("/:name", groupController.getByName);
     router.post("/", groupController.create);
+    router.put("/:id(\\d+)", groupController.editById);
+    router.delete("/:id(\\d+)", groupController.removeById);
 
     return router;
   };
