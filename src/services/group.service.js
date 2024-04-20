@@ -6,11 +6,13 @@ const GroupService = () => {
       id: 1,
       name: "Group 4",
       color: "#FF0000",
+      createdAt: "17-04-2024"
     },
     {
       id: 2,
       name: "Group 6",
       color: "#0000FF",
+      createdAt: "18-04-2024"
     },
   ]);
 
@@ -23,8 +25,8 @@ const GroupService = () => {
     const groups = groupModel.findMany();
     const sortedGroups =
       sort === "asc"
-        ? groups.sort((a, b) => a.name.localeCompare(b.name))
-        : groups.sort((a, b) => b.name.localeCompare(a.name));
+        ? groups.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        : groups.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
     return sortedGroups;
    
   };

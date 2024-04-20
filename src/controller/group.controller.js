@@ -66,11 +66,14 @@ const GroupController = () => {
       });
     }
 
+    const currentDate = new Date().toLocaleDateString('en-GB');
+
     // creating our own body only with the fields we really need (name & color only)
     // doing this we discard the rest of the fields we may receive in the body
     const sanitizedBody = {
       name: name.trim(),
       color: color.trim(),
+      createdAt: currentDate,
     };
 
     const { newGroup, success, message, code } =
