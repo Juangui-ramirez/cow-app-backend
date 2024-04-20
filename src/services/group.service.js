@@ -1,4 +1,4 @@
-import  Model  from "../database/model.js";
+import  Model  from "../lib/model.js";
 
 const GroupService = () => {
   const groupModel = Model([
