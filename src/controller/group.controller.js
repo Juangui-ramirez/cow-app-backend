@@ -3,14 +3,14 @@ import GroupService from "../services/group.service.js";
 const GroupController = () => {
   const groupService = GroupService();
 
-  const getAll = (req, res) => {
+  const getAll = async (req, res) => {
     const sort = req.query.sort || "asc";
     const groups = groupService.getAll(sort);
 
     return res.status(200).json(groups);
   };
 
-  const getById = (req, res) => {
+  const getById = async (req, res) => {
     const group = groupService.getById(Number(req.params.id));
 
     if (!group) {
@@ -22,7 +22,7 @@ const GroupController = () => {
     return res.status(200).json(group);
   };
 
-  const getByName = (req, res) => {
+  const getByName = async (req, res) => {
     const groupName = req.params.name;
     const group = groupService.getByName(groupName);
 
@@ -33,7 +33,7 @@ const GroupController = () => {
     return;
   };
 
-  const create = (req, res) => {
+  const create = async (req, res) => {
     const { name, color } = req.body;
 
     if (!name || !color) {
@@ -66,7 +66,7 @@ const GroupController = () => {
       });
     }
 
-    const currentDate = new Date().toLocaleDateString('en-GB');
+    const currentDate = new Date().toLocaleDateString("en-GB");
 
     // creating our own body only with the fields we really need (name & color only)
     // doing this we discard the rest of the fields we may receive in the body
@@ -86,7 +86,7 @@ const GroupController = () => {
     }
   };
 
-  const editById = (req, res) => {
+  const editById = async (req, res) => {
     const updated = groupService.editById(Number(req.params.id), req.body);
 
     if (updated) {
@@ -97,9 +97,9 @@ const GroupController = () => {
     });
   };
 
-  const removeById = (req, res) => {
+  const removeById = async (req, res) => {
     const removed = groupService.removeById(Number(req.params.id));
-    
+
     if (removed) {
       return res.status(204).send();
     }
@@ -114,7 +114,7 @@ const GroupController = () => {
     getByName,
     create,
     editById,
-    removeById
+    removeById,
   };
 };
 
