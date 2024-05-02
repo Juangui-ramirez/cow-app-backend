@@ -1,20 +1,7 @@
 import  Model  from "../lib/model.js";
 
 const GroupService = () => {
-  const groupModel = Model([
-    {
-      id: 1,
-      name: "Group 4",
-      color: "#FF0000",
-      createdAt: "17-04-2024"
-    },
-    {
-      id: 2,
-      name: "Group 6",
-      color: "#0000FF",
-      createdAt: "18-04-2024"
-    },
-  ]);
+  const groupModel = Model();
 
   /**
    *
