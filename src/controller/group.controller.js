@@ -4,14 +4,14 @@ const GroupController = () => {
   const groupService = GroupService();
 
   const getAll = async (req, res) => {
-    const sort = req.query.sort || "asc";
-    const groups = groupService.getAll(sort);
+    const sort = req.query.sort || "desc";
+    const groups = await groupService.getAll(sort);
 
     return res.status(200).json(groups);
   };
 
   const getById = async (req, res) => {
-    const group = groupService.getById(Number(req.params.id));
+    const group = await groupService.getById(Number(req.params.id));
 
     if (!group) {
       return res
@@ -24,8 +24,7 @@ const GroupController = () => {
 
   const getByName = async (req, res) => {
     const groupName = req.params.name;
-    const group = groupService.getByName(groupName);
-
+    const group = await groupService.getByName(groupName);
     if (!group) {
       return res.status(404).json({ error: `${groupName} not exist` });
     }
@@ -66,21 +65,20 @@ const GroupController = () => {
       });
     }
 
-    const currentDate = new Date().toLocaleDateString("en-GB");
+    
 
     // creating our own body only with the fields we really need (name & color only)
     // doing this we discard the rest of the fields we may receive in the body
     const sanitizedBody = {
       name: name.trim(),
       color: color.trim(),
-      createdAt: currentDate,
     };
 
-    const { newGroup, success, message, code } =
+    const { newGroup, success, message, code } = await
       groupService.create(sanitizedBody);
 
     if (success) {
-      return res.status(code).json(newGroup);
+      return res.status(code).json({newGroup, message});
     } else {
       return res.status(code).json(message);
     }
