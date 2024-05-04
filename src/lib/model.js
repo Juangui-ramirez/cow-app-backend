@@ -1,56 +1,78 @@
+import connection from "./connection.js";
+
 const Model = (initialEntities) => {
   const entities = initialEntities || [];
 
-  const findUnique = (id) => {
-    return entities.find((entity) => entity.id === (id));
+  const findUnique = async (id) => {
+    const client = await connection.connect();
+
+    const res = await client.query("SELECT  * FROM groups WHERE id = $1", [id]);
+
+    client.release();
+
+    return res.rows[0];
   };
 
-  const findMany = () => {
-    return entities;
-  };
+  const findMany = async (sort) => {
+    const client = await connection.connect();
 
-  const findWhere = (attribute, value) => {
-    return entities.find((entity) => {
-      return entity[attribute] === value;
-    });
-  };
-
-  const create = (entity) => {
-    const maxId = entities.reduce((max, { id }) => Math.max(max, id), 0);
-    const newId = (maxId + 1);
-    const newEntity = {
-      ...entity,
-      id: newId,
-    };
-    entities.push(newEntity);
-    return newEntity;
-  };
-
-  const update = (id, newEntity) => {
-    const entityIndex = entities.findIndex((entity) => entity.id === (id));
-    if (entityIndex !== -1) {
-      entities[entityIndex] = newEntity;
-      return true;
+    let query = "SELECT * FROM groups";
+    if (sort === "desc") {
+      query += " ORDER BY createdAt DESC";
     }
-    return false;
+
+    const res = await client.query(query);
+    return res.rows;
   };
 
-  const del = (id) => {
-    const entityIndex = entities.findIndex((entity) => entity.id === (id));
-    if (entityIndex !== -1) {
-      entities.splice(entityIndex, 1);
-      return true;
-    }
-    return false;
+  const findByName = async (name) => {
+    const client = await connection.connect();
+    const res = await client.query(
+      "SELECT COUNT(*) FROM groups WHERE name = $1",[name]
+    );
+    client.release();
+    return res.rows[0].count > 0;
+  };
+
+  const create = async (entity) => {
+    const client = await connection.connect();
+
+    const res = await client.query(
+      "INSERT INTO groups (name, color, ownerUserid, createdAt) VALUES ($1, $2, $3, NOW())", [entity.name, entity.color, 1]);
+
+    client.release();
+
+    return res.rows[0];
+  };
+
+  const removeById = async (id) => {
+    const client = await connection.connect();
+
+    const res = await client.query("DELETE FROM groups WHERE id = $1", [id]);
+
+    client.release();
+
+    return res.rowCount > 0;
+  };
+
+  const update = async (id, newEntity) => {
+    const client = await connection.connect();
+
+    const res = await client.query(
+      "UPDATE groups SET name = $1, color = $2 WHERE id = $3", [newEntity.name, newEntity.color, id]);
+
+    client.release();
+
+    return res.rowCount > 0;
   };
 
   return {
     findUnique,
     findMany,
     create,
-    delete: del,
+    delete: removeById,
     update,
-    findWhere,
+    findByName
   };
 };
 
