@@ -8,15 +8,11 @@ const GroupService = () => {
    * @param string sort
    * @returns
    */
-  const getAll = (sort) => {
-    const groups = groupModel.findMany();
-    const sortedGroups =
-      sort === "asc"
-        ? groups.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-        : groups.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-    return sortedGroups;
-   
-  };
+  const getAll = async () => {
+  const groups = await groupModel.findMany();
+ 
+  return groups;
+};
 
   /**
    *
@@ -32,8 +28,8 @@ const GroupService = () => {
    * @param string name
    * @returns
    */
-  const getByName = (name) => {
-    const groupFound = groupModel.findWhere("name", name)
+  const getByName = async (name) => {
+    const groupFound = await groupModel.findByName("name", name)
     return groupFound;
   };
 
@@ -42,7 +38,7 @@ const GroupService = () => {
    * @param newGroup of the form: {id: number, name: string, color: string}
    * @returns
    */
-  const create = (newGroup) => {
+  const create = async (newGroup) => {
     const { name } = newGroup;
 
     if (name.length > 30) {
@@ -54,7 +50,7 @@ const GroupService = () => {
       };
     }
 
-    const groupFound = groupModel.findWhere("name", name);
+    const groupFound = await groupModel.findByName(name);
 
     if (groupFound) {
       return {
@@ -65,7 +61,7 @@ const GroupService = () => {
       };
     }
 
-    const createdGroup = groupModel.create(newGroup);
+    const createdGroup = await groupModel.create(newGroup);
     
 
     return {
@@ -94,7 +90,6 @@ const GroupService = () => {
     return success;
   };
   
-
   const removeById = (id) => {
     const removed = groupModel.delete(id);
     
