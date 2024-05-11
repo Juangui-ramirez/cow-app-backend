@@ -1,7 +1,7 @@
-import  Model  from "../lib/model.js";
+import  GroupModel from "../models/group.model.js";
 
 const GroupService = () => {
-  const groupModel = Model();
+  const groupModel = GroupModel();
 
   /**
    *
@@ -9,7 +9,7 @@ const GroupService = () => {
    * @returns
    */
   const getAll = async () => {
-  const groups = await groupModel.findMany();
+  const groups = await groupModel.findMany("desc");
  
   return groups;
 };
