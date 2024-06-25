@@ -22,16 +22,17 @@ const GroupModel = (initialEntities) => {
     }
 
     const res = await client.query(query);
+    client.release();
     return res.rows;
   };
 
   const findByName = async (name) => {
     const client = await connection.connect();
     const res = await client.query(
-      "SELECT COUNT(*) FROM groups WHERE name = $1",[name]
+      "SELECT * FROM groups WHERE name = $1",[name]
     );
     client.release();
-    return res.rows[0].count > 0;
+    return res.rows.length > 0 ? res.rows[0] : null;
   };
 
   const create = async (entity) => {

@@ -1,26 +1,24 @@
-import  GroupModel from "../models/group.model.js";
+import GroupModel from "../models/group.model.js";
 
 const GroupService = () => {
   const groupModel = GroupModel();
 
   /**
    *
-   * @param string sort
    * @returns
    */
   const getAll = async () => {
-  const groups = await groupModel.findMany("desc");
- 
-  return groups;
-};
+    const groups = await groupModel.findMany("desc");
+    return groups;
+  };
 
   /**
    *
    * @param number id
    * @returns
    */
-  const getById = (id) => {
-    return groupModel.findUnique(id);
+  const getById = async (id) => {
+    return await groupModel.findUnique(id);
   };
 
   /**
@@ -29,7 +27,7 @@ const GroupService = () => {
    * @returns
    */
   const getByName = async (name) => {
-    const groupFound = await groupModel.findByName("name", name)
+    const groupFound = await groupModel.findByName(name);
     return groupFound;
   };
 
@@ -45,7 +43,7 @@ const GroupService = () => {
       return {
         newGroup: null,
         success: false,
-        message: "The field name can not be longer thatn 30 characters",
+        message: "The field name can not be longer than 30 characters",
         code: 400,
       };
     }
@@ -62,7 +60,6 @@ const GroupService = () => {
     }
 
     const createdGroup = await groupModel.create(newGroup);
-    
 
     return {
       newGroup: createdGroup,
@@ -70,14 +67,17 @@ const GroupService = () => {
       message: "Group created successfully",
       code: 201,
     };
-
   };
 
-  const editById = (id, group) => {
-    const existingGroup = groupModel.findUnique(id);
+  const editById = async (id, group) => {
+    const existingGroup = await groupModel.findUnique(id);
   
     if (!existingGroup) {
-      return false;
+      return {
+        success: false,
+        message: `Group with id ${id} does not exist`,
+        code: 404,
+      };
     }
   
     const updatedGroup = {
@@ -85,19 +85,42 @@ const GroupService = () => {
       ...group,
     };
   
-    const success = groupModel.update(id, updatedGroup);
+    const success = await groupModel.update(id, updatedGroup);
   
-    return success;
+    return {
+      success,
+      message: success ? 'Group updated successfully' : 'Failed to update group',
+      code: success ? 200 : 500,
+    };
   };
   
-  const removeById = (id) => {
-    const removed = groupModel.delete(id);
-    
-    if (removed) {
-      return true; 
+
+  const removeById = async (id) => {
+    const existingGroup = await groupModel.findUnique(id);
+  
+    if (!existingGroup) {
+      return {
+        success: false,
+        message: `Group with id ${id} does not exist`,
+        code: 404
+      };
     }
-    return false;
+  
+    const removed = await groupModel.delete(id);
+  
+    if (removed) {
+      return {
+        success: true,
+      };
+    } else {
+      return {
+        success: false,
+        message: "Failed to delete group",
+        code: 500
+      };
+    }
   };
+  
 
   return {
     getAll,
@@ -105,8 +128,8 @@ const GroupService = () => {
     getByName,
     create,
     editById,
-    removeById
+    removeById,
   };
 };
 
-export default GroupService ;
+export default GroupService;
