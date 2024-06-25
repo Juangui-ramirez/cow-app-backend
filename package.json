@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --watch .env --watch src src/app.js"
+    "dev": "nodemon --watch .env --watch src src/app.js",
+    "start": "node src/app.js"
   },
   "keywords": [],
   "author": "",
