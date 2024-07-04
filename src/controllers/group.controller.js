@@ -6,9 +6,16 @@ const GroupController = () => {
   const getAll = async (req, res) => {
     try {
       const sort = req.query.sort || "desc";
-      const groups = await groupService.getAll(sort);
+      const userId = req.user.id; // Obtén userId del token JWT o de la sesión
+
+      if (!userId) {
+        return res.status(400).json({ message: "Invalid userId" });
+      }
+
+      const groups = await groupService.getAll(sort, userId); // Llama al servicio con userId
       return res.status(200).json(groups);
     } catch (error) {
+      console.error("Error in getAll controller:", error);
       return res.status(500).json({ message: "Error fetching groups" });
     }
   };

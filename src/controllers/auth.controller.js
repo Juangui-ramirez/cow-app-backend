@@ -17,12 +17,10 @@ const AuthController = () => {
 
     const token = jwt.sign(payload, process.env.JWT_SECRET);
 
-    res.json({ token });
+    res.json({ token, userId: user.id });
   };
 
-  return {login}
+  return { login };
 };
 
 export default AuthController;
-
-

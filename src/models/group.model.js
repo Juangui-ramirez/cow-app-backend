@@ -13,15 +13,15 @@ const GroupModel = (initialEntities) => {
     return res.rows[0];
   };
 
-  const findMany = async (sort) => {
+  const findMany = async (sort, userId) => {
     const client = await connection.connect();
-
-    let query = "SELECT * FROM groups";
+  
+    let query = "SELECT * FROM groups WHERE owneruserid = $1"; // Ajusta según tu esquema de base de datos
     if (sort === "desc") {
       query += " ORDER BY createdAt DESC";
     }
-
-    const res = await client.query(query);
+  
+    const res = await client.query(query, [userId]);
     client.release();
     return res.rows;
   };

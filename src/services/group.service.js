@@ -7,9 +7,14 @@ const GroupService = () => {
    *
    * @returns
    */
-  const getAll = async () => {
-    const groups = await groupModel.findMany("desc");
-    return groups;
+  const getAll = async (sort, userId) => {
+    try {
+      const groups = await groupModel.findMany(sort, userId); // Llama al modelo con userId
+      return groups;
+    } catch (error) {
+      console.error("Error in getAll service:", error);
+      throw new Error("Error fetching groups");
+    }
   };
 
   /**
