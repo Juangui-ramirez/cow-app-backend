@@ -43,27 +43,30 @@ const GroupController = () => {
   const create = async (req, res) => {
     try {
       const { name, color } = req.body;
-
+      const ownerUserId = req.user.id; // Obtiene el ID del usuario autenticado desde req.user
+  
       if (!name || !color) {
         return res.status(400).json({ message: "The fields name and color are required" });
       }
-
+  
       if (typeof name !== "string" || !name.trim()) {
         return res.status(400).json({ message: "The field name should be a non-empty string" });
       }
-
+  
       if (typeof color !== "string" || !color.trim()) {
         return res.status(400).json({ message: "The field color should be a non-empty string" });
       }
-
-      const sanitizedBody = { name: name.trim(), color: color.trim() };
+  
+      const sanitizedBody = { name: name.trim(), color: color.trim(), ownerUserId };
       const { newGroup, success, message, code } = await groupService.create(sanitizedBody);
-
+  
       return res.status(code).json(success ? { newGroup, message } : { message });
     } catch (error) {
       return res.status(500).json({ message: "Error creating group" });
     }
   };
+  
+  
 
   const editById = async (req, res) => {
     try {

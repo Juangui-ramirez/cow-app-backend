@@ -37,19 +37,19 @@ const GroupService = () => {
    * @returns
    */
   const create = async (newGroup) => {
-    const { name } = newGroup;
-
+    const { name, color, ownerUserId } = newGroup;
+  
     if (name.length > 30) {
       return {
         newGroup: null,
         success: false,
-        message: "The field name can not be longer than 30 characters",
+        message: "The field name cannot be longer than 30 characters",
         code: 400,
       };
     }
-
+  
     const groupFound = await groupModel.findByName(name);
-
+  
     if (groupFound) {
       return {
         newGroup: null,
@@ -58,9 +58,9 @@ const GroupService = () => {
         code: 400,
       };
     }
-
-    const createdGroup = await groupModel.create(newGroup);
-
+  
+    const createdGroup = await groupModel.create({ name, color, ownerUserId });
+  
     return {
       newGroup: createdGroup,
       success: true,
@@ -68,6 +68,7 @@ const GroupService = () => {
       code: 201,
     };
   };
+  
 
   const editById = async (id, group) => {
     const existingGroup = await groupModel.findUnique(id);

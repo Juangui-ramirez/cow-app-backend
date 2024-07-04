@@ -37,15 +37,17 @@ const GroupModel = (initialEntities) => {
 
   const create = async (entity) => {
     const client = await connection.connect();
-
+  
     const res = await client.query(
-      "INSERT INTO groups (name, color, ownerUserid, createdAt) VALUES ($1, $2, $3, NOW())", [entity.name, entity.color, 1]);
-
+      "INSERT INTO groups (name, color, ownerUserId, createdAt) VALUES ($1, $2, $3, NOW()) RETURNING *",
+      [entity.name, entity.color, entity.ownerUserId]
+    );
+  
     client.release();
-
+  
     return res.rows[0];
   };
-
+  
   const removeById = async (id) => {
     const client = await connection.connect();
 
