@@ -20,7 +20,7 @@ const UserModel = () => {
     user.password = await bcrypt.hash(user.password, 10);
     const { name, email, password } = user;
     const result = await client.query(
-      "INSERT INTO Users (name, email, password, createdAt) VALUES ($1, $2, $3, NOW())",
+      "INSERT INTO Users (name, email, password, createdAt) VALUES ($1, $2, $3, NOW()) RETURNING *",
       [name, email, password]
     );
     client.release();

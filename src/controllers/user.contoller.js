@@ -1,4 +1,5 @@
-import  UserService  from "../services/user.service.js";
+import UserService from "../services/user.service.js";
+import jwt from "jsonwebtoken";
 
 const UserController = () => {
   const userService = UserService();
@@ -11,7 +12,6 @@ const UserController = () => {
   };
 
   const getById = async (req, res) => {
-
     const user = await userService.getById(req.params.id);
 
     if (!user) {
@@ -26,10 +26,15 @@ const UserController = () => {
   };
 
   const create = async (req, res) => {
-
     const response = await userService.create(req.body);
+    const payload = { id: response.newUser.id, date: Date.now(), name: response.newUser.name };
 
-    return res.status(200).json(response);
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
+    const newResponse = {
+      ...response,
+      token
+    }
+    return res.status(200).json(newResponse);
   };
 
   return {
@@ -39,4 +44,4 @@ const UserController = () => {
   };
 };
 
-export default UserController ;
+export default UserController;
