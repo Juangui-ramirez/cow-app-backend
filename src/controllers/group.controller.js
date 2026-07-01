@@ -78,10 +78,6 @@ const GroupController = () => {
   const editById = async (req, res) => {
     try {
       const updated = await groupService.editById(Number(req.params.id), req.body);
-  
-      if (updated.success) {
-        return res.status(updated.code).json({ message: updated.message });
-      }
       return res.status(updated.code).json({ message: updated.message });
     } catch (error) {
       return res.status(500).json({ message: "Error updating group" });
@@ -95,8 +91,58 @@ const GroupController = () => {
       if (removed.success) {
         return res.status(204).send();
       }
+      return res.status(removed.code).json({ message: removed.message });
     } catch (error) {
       return res.status(500).json({ message: "Error deleting group" });
+    }
+  };
+
+  const getMembers = async (req, res) => {
+    try {
+      const groupId = Number(req.params.id);
+      const userId = req.user.id;
+      const result = await groupService.getMembers(groupId, userId);
+      if (!result.success) {
+        return res.status(result.code).json({ message: result.message });
+      }
+      return res.status(200).json(result.members);
+    } catch (error) {
+      return res.status(500).json({ message: "Error fetching group members" });
+    }
+  };
+
+  const addMember = async (req, res) => {
+    try {
+      const groupId = Number(req.params.id);
+      const userId = req.user.id;
+      const { email } = req.body;
+
+      if (!email || typeof email !== "string" || !email.trim()) {
+        return res.status(400).json({ message: "The field email is required" });
+      }
+
+      const result = await groupService.addMember(groupId, userId, email.trim());
+      return res.status(result.code).json(
+        result.success ? { member: result.member, message: result.message } : { message: result.message }
+      );
+    } catch (error) {
+      return res.status(500).json({ message: "Error adding group member" });
+    }
+  };
+
+  const removeMember = async (req, res) => {
+    try {
+      const groupId = Number(req.params.id);
+      const memberUserId = Number(req.params.userId);
+      const userId = req.user.id;
+
+      const result = await groupService.removeMember(groupId, memberUserId, userId);
+      if (result.success) {
+        return res.status(204).send();
+      }
+      return res.status(result.code).json({ message: result.message });
+    } catch (error) {
+      return res.status(500).json({ message: "Error removing group member" });
     }
   };
 
@@ -107,6 +153,9 @@ const GroupController = () => {
     create,
     editById,
     removeById,
+    getMembers,
+    addMember,
+    removeMember,
   };
 };
 

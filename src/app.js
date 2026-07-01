@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import GroupRouter from "./router/group.router.js";
 import UserRouter from "./router/user.router.js";
+import FriendRouter from "./router/friend.router.js";
+import BillRouter from "./router/bill.router.js";
 import passport from "passport";
 import AuthRouter from "./router/auth.router.js";
 import applyJWTAuthentication from "./middlewares/auth.middleware.js";
@@ -23,6 +25,8 @@ app.use(applyJWTAuthentication);
 app.use("/groups", GroupRouter().registerRoutes());
 app.use("/users", UserRouter().registerRoutes());
 app.use("/auth", AuthRouter().registerRoutes());
+app.use("/friends", FriendRouter().registerRoutes());
+app.use("/bills", BillRouter().registerRoutes());
 
 //main
 app.listen(PORT, () => {
