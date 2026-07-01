@@ -1,17 +1,18 @@
-import  UserModel  from '../models/user.model.js';
+import UserModel from "../models/user.model.js";
 
 const UserService = () => {
-    const userModel = UserModel();
+  const userModel = UserModel();
 
-    const getAll = async () => {
-        const users = await userModel.findMany();
-       
-        return users;
-      };
+  const getAll = async (sort) => {
+    return await userModel.findMany(sort);
+  };
 
-  const getById = (id) => {
+  const getById = async (id) => {
+    return await userModel.getById(id);
+  };
 
-    return userModel.getById(id);
+  const getByEmail = async (email) => {
+    return await userModel.getByEmail(email);
   };
 
   const create = async (newUser) => {
@@ -20,21 +21,17 @@ const UserService = () => {
     return {
       newUser: createdUser,
       success: true,
-      message: 'User created successfully',
+      message: "User created successfully",
       code: 201,
     };
-  };
-
-  const getByEmail = (email) => {
-    return userModel.getByEmail(email);
   };
 
   return {
     getAll,
     getById,
-    create,
     getByEmail,
+    create,
   };
 };
 
-export default UserService ;
+export default UserService;

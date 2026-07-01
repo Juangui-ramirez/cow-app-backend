@@ -78,10 +78,6 @@ const GroupController = () => {
   const editById = async (req, res) => {
     try {
       const updated = await groupService.editById(Number(req.params.id), req.body);
-  
-      if (updated.success) {
-        return res.status(updated.code).json({ message: updated.message });
-      }
       return res.status(updated.code).json({ message: updated.message });
     } catch (error) {
       return res.status(500).json({ message: "Error updating group" });
@@ -95,6 +91,7 @@ const GroupController = () => {
       if (removed.success) {
         return res.status(204).send();
       }
+      return res.status(removed.code).json({ message: removed.message });
     } catch (error) {
       return res.status(500).json({ message: "Error deleting group" });
     }

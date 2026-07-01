@@ -1,5 +1,5 @@
-import Router  from "express-promise-router";
-import  UserController  from "../controllers/user.contoller.js";
+import Router from "express-promise-router";
+import UserController from "../controllers/user.controller.js";
 
 const UserRouter = () => {
   const userController = UserController();
@@ -19,4 +19,4 @@ const UserRouter = () => {
   };
 };
 
-export default UserRouter ;
+export default UserRouter;
