@@ -7,7 +7,11 @@ const BillService = () => {
   const billSplitModel = BillSplitModel();
   const groupMemberModel = GroupMemberModel();
 
-  const createBill = async (groupId, requestingUserId, { description, amount }) => {
+  // `splits`, when provided, is a proportional/custom split: an array of
+  // { userId, amountOwed } for every non-payer member, which must add up to
+  // the bill's total amount. When omitted, the amount is split equally
+  // among all members instead.
+  const createBill = async (groupId, requestingUserId, { description, amount, splits }) => {
     const isMember = await groupMemberModel.isMember(groupId, requestingUserId);
     if (!isMember) {
       return { success: false, message: "You are not a member of this group", code: 403 };
@@ -27,6 +31,43 @@ const BillService = () => {
       return { success: false, message: "The group has no members to split the bill with", code: 400 };
     }
 
+    let finalSplits;
+    if (Array.isArray(splits) && splits.length > 0) {
+      const memberIds = new Set(members.map((member) => member.userId));
+      let total = 0;
+
+      for (const split of splits) {
+        const userId = Number(split.userId);
+        const amountOwed = Number(split.amountOwed);
+
+        if (userId === requestingUserId) {
+          return { success: false, message: "The payer shouldn't have a share in the splits", code: 400 };
+        }
+        if (!memberIds.has(userId)) {
+          return { success: false, message: "All splits must belong to current group members", code: 400 };
+        }
+        if (!Number.isFinite(amountOwed) || amountOwed < 0) {
+          return { success: false, message: "Every split amount must be a non-negative number", code: 400 };
+        }
+
+        total += amountOwed;
+      }
+
+      if (Math.abs(total - numericAmount) > 0.01) {
+        return { success: false, message: "The splits must add up to the bill's total amount", code: 400 };
+      }
+
+      finalSplits = splits.map((split) => ({
+        userId: Number(split.userId),
+        amountOwed: Number(split.amountOwed),
+      }));
+    } else {
+      const share = Math.round((numericAmount / members.length) * 100) / 100;
+      finalSplits = members
+        .filter((member) => member.userId !== requestingUserId)
+        .map((member) => ({ userId: member.userId, amountOwed: share }));
+    }
+
     const bill = await billModel.create({
       groupId,
       description: description.trim(),
@@ -34,13 +75,8 @@ const BillService = () => {
       paidByUserId: requestingUserId,
     });
 
-    const share = Math.round((numericAmount / members.length) * 100) / 100;
-    const splits = members
-      .filter((member) => member.userId !== requestingUserId)
-      .map((member) => ({ userId: member.userId, amountOwed: share }));
-
-    if (splits.length > 0) {
-      await billSplitModel.createMany(bill.id, splits);
+    if (finalSplits.length > 0) {
+      await billSplitModel.createMany(bill.id, finalSplits);
     }
 
     return { success: true, bill, message: "Bill created successfully", code: 201 };

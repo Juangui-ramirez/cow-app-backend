@@ -33,12 +33,12 @@ const BillController = () => {
 
   const create = async (req, res) => {
     try {
-      const { groupId, description, amount } = req.body;
+      const { groupId, description, amount, splits } = req.body;
       if (!groupId) {
         return res.status(400).json({ message: "The field groupId is required" });
       }
 
-      const result = await billService.createBill(Number(groupId), req.user.id, { description, amount });
+      const result = await billService.createBill(Number(groupId), req.user.id, { description, amount, splits });
       return res.status(result.code).json(
         result.success ? { bill: result.bill, message: result.message } : { message: result.message }
       );
