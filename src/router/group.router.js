@@ -8,6 +8,9 @@ const GroupRouter = () => {
     const router = Router();
 
     router.get("/", groupController.getAll);
+    router.get("/:id(\\d+)/members", groupController.getMembers);
+    router.post("/:id(\\d+)/members", groupController.addMember);
+    router.delete("/:id(\\d+)/members/:userId(\\d+)", groupController.removeMember);
     router.get("/:id(\\d+)", groupController.getById);
     router.get("/:name", groupController.getByName);
     router.post("/", groupController.create);

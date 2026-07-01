@@ -1,7 +1,11 @@
 import GroupModel from "../models/group.model.js";
+import GroupMemberModel from "../models/groupMember.model.js";
+import UserModel from "../models/user.model.js";
 
 const GroupService = () => {
   const groupModel = GroupModel();
+  const groupMemberModel = GroupMemberModel();
+  const userModel = UserModel();
 
   /**
    *
@@ -65,6 +69,7 @@ const GroupService = () => {
     }
   
     const createdGroup = await groupModel.create({ name, color, ownerUserId });
+    await groupMemberModel.add(createdGroup.id, ownerUserId);
   
     return {
       newGroup: createdGroup,
@@ -126,7 +131,50 @@ const GroupService = () => {
       };
     }
   };
-  
+
+  const getMembers = async (groupId, userId) => {
+    const isMember = await groupMemberModel.isMember(groupId, userId);
+    if (!isMember) {
+      return { success: false, message: "You are not a member of this group", code: 403 };
+    }
+
+    const members = await groupMemberModel.findByGroup(groupId);
+    return { success: true, members };
+  };
+
+  const addMember = async (groupId, requestingUserId, email) => {
+    const isMember = await groupMemberModel.isMember(groupId, requestingUserId);
+    if (!isMember) {
+      return { success: false, message: "You are not a member of this group", code: 403 };
+    }
+
+    const user = await userModel.getByEmail(email);
+    if (!user) {
+      return { success: false, message: "User not found", code: 404 };
+    }
+
+    const alreadyMember = await groupMemberModel.isMember(groupId, user.id);
+    if (alreadyMember) {
+      return { success: false, message: "User is already a member of this group", code: 400 };
+    }
+
+    const member = await groupMemberModel.add(groupId, user.id);
+    return { success: true, member, message: "Member added to group", code: 201 };
+  };
+
+  const removeMember = async (groupId, memberUserId, requestingUserId) => {
+    const isMember = await groupMemberModel.isMember(groupId, requestingUserId);
+    if (!isMember) {
+      return { success: false, message: "You are not a member of this group", code: 403 };
+    }
+
+    const removed = await groupMemberModel.remove(groupId, memberUserId);
+    if (!removed) {
+      return { success: false, message: "Member not found in this group", code: 404 };
+    }
+
+    return { success: true };
+  };
 
   return {
     getAll,
@@ -135,6 +183,9 @@ const GroupService = () => {
     create,
     editById,
     removeById,
+    getMembers,
+    addMember,
+    removeMember,
   };
 };
 
